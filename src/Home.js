@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { BrowserProvider, Contract, parseEther } from 'ethers';
+import { BrowserProvider, Contract, parseEther } from 'ethers'; // Importing parseEther directly
 import constants from './constants';
 
 function Home() {
@@ -7,6 +7,7 @@ function Home() {
     const [contractInstance, setContractInstance] = useState(null);
     const [status, setStatus] = useState(false);
     const [isWinner, setIsWinner] = useState(false);
+    const [amount, setAmount] = useState("");
 
     useEffect(() => {
         const loadBlockchainData = async () => {
@@ -51,7 +52,7 @@ function Home() {
     }, [currentAccount, contractInstance]);
 
     const enterLottery = async () => {
-        const amountToSend = parseEther('0.01');
+        const amountToSend = parseEther(amount); // Correct usage of parseEther
         const tx = await contractInstance.enter({ value: amountToSend });
         await tx.wait();
     };
@@ -68,6 +69,17 @@ function Home() {
     return (
         <div className="container">
             <h1>Lottery Page</h1>
+            <div className="input-container">
+                <input 
+                    type="text" 
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    placeholder="Enter amount in ETH"
+                />
+                <button className="enter-button" onClick={enterLottery} disabled={!amount}>
+                    Enter Lottery
+                </button>
+            </div>
             <div className="button-container">
                 {status ? (
                     isWinner ? (
@@ -76,7 +88,7 @@ function Home() {
                         <p>You are not the winner</p>
                     )
                 ) : (
-                    <button className="enter-button" onClick={enterLottery}> Enter Lottery </button>
+                    <p>Enter an amount to join the lottery</p>
                 )}
             </div>
         </div>
@@ -84,5 +96,4 @@ function Home() {
 }
 
 export default Home;
-
 
